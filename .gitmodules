@@ -9,3 +9,6 @@
 	path = zsh/prompt
 	url = https://github.com/Phantas0s/purification
     branch = master
+[submodule "zsh/prompts/pure"]
+	path = zsh/prompts/pure
+	url = git@github.com:sindresorhus/pure.git
