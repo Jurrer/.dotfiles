@@ -12,3 +12,6 @@
 [submodule "zsh/prompts/pure"]
 	path = zsh/prompts/pure
 	url = git@github.com:sindresorhus/pure.git
+[submodule "zsh/plugins/zsh-autosuggestions"]
+	path = zsh/plugins/zsh-autosuggestions
+	url = git@github.com:zsh-users/zsh-autosuggestions.git
