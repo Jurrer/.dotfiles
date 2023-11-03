@@ -1,44 +1,5 @@
 #!/usr/bin/env zsh
 
-screenres() {
-    [ ! -z $1 ] && xrandr --current | grep '*' | awk '{print $1}' | sed -n "$1p"
-}
-
-# Begin a screencast 
-# TODO - To fix (and miss the webcam)
-screencast() {
-    T="$(date +%d-%m-%Y-%H-%M-%S)".mkv
-    if [ $# -gt 0 ]; then
-        if echo $1 | grep '\....$' > /dev/null; then
-            T=$1
-        else
-            T=$1.mkv
-        fi
-    fi
-
-    # To list cams: v4l2-ctl --list-devices
-    # Record screen 2 by default
-    local screen=2
-    local offset=""
-    local heights=(`screenres 1 | awk -Fx '{print $2}'` `screenres 2 | awk -Fx '{print $2}'`)
-    local bigger_height=$(echo $heights | sed "s/ /\n/" | sort -rg | line 1)
-
-        [ $screen -eq 1 ] && offset="+0,$(( $bigger_height -  $(screenres 1 | awk -Fx '{print $2}')))"
-        ffmpeg -f x11grab -framerate 60 -s $(screenres $screen) -i :0.0$offset \
-            -f v4l2 -framerate 30 -video_size 640x480 -i /dev/video2 \
-            -f pulse -sample_rate 44100 -i default \
-            -filter_complex "overlay=main_w-overlay_w-2:main_h-overlay_h-2" \
-            -c:v libx264 -preset ultrafast -crf 18 -c:a aac -b:a 320k $T
-}
-
-oscreencast() {
-    if [ ! -z $1 ]; then
-        ffmpeg -f x11grab -s $(xdpyinfo | grep dimensions | awk '{print $2}') -i :0.0 $1
-    else
-        echo "You need to precise an output file as first argument - eg 'example.mkv'"
-    fi
-}
-
 # Run script to update Arch and others
 updatesys() {
     sh $DOTFILES/update.sh
@@ -93,249 +54,14 @@ _ex() {
     esac
 }
 
-# Compress a file 
-# TODO to improve to compress in any possible format
-# TODO to improve to compress multiple files
-compress() {
-    local DATE="$(date +%Y%m%d-%H%M%S)"
-    tar cvzf "$DATE.tar.gz" "$@"
-}
-
-# Take a screenshot
-screenshot () {
-    local DIR="$SCREENSHOT"
-    local DATE="$(date +%Y%m%d-%H%M%S)"
-    local NAME="${DIR}/screenshot-${DATE}.png"
-
-    # Check if the dir to store the screenshots exists, else create it:
-    if [ ! -d "${DIR}" ]; then mkdir -p "${DIR}"; fi
-
-    # Screenshot a selected window
-    if [ "$1" = "win" ]; then import -format png -quality 100 "${NAME}"; fi
-
-    # Screenshot the entire screen
-    if [ "$1" = "scr" ]; then import -format png -quality 100 -window root "${NAME}"; fi
-
-    # Screenshot a selected area
-    if [ "$1" = "area" ]; then import -format png -quality 100 "${NAME}"; fi
-
-    if [[ $1 =~ "^[0-9].*x[0-9].*$" ]]; then import -format png -quality 100 -resize $1 "${NAME}"; fi
-
-    if [[ $1 =~ "^[0-9]+$" ]]; then import -format png -quality 100 -resize $1 "${NAME}" ; fi
-
-    if [[ $# = 0 ]]; then
-        # Display a warning if no area defined
-        echo "No screenshot area has been specified. Please choose between: win, scr, area. Screenshot not taken."
-    fi
-}
-
-# Spit the size of images
-imgsize() {
-    for file in "$@"
-    do
-        local width=$(identify -format "%w" "$file")> /dev/null
-        local height=$(identify -format "%h" "$file")> /dev/null
-
-        echo -e "Size of $file: $width*$height"
-    done
-}
-
-# Resize an image
-imgresize() {
-    local filename=${1%\.*}
-    local extension="${1##*.}"
-    local separator="_"
-    if [ ! -z $3 ]; then
-        local finalName="$filename.$extension"
-    else
-        local finalName="$filename$separator$2.$extension"
-    fi
-    convert $1 -quality 100 -resize $2 $finalName
-    echo "$finalName resized to $2"
-}
-
-Imgresize() {
-    imgresize $1 $2 true
-}
-
-imgresizeall() {
-    for f in *.${1}; do
-        if [ ! -z $3 ]; then
-            imgresize "$f" ${2} t
-        else
-            imgresize "$f" ${2}
-        fi
-    done
-}
-
-imgoptimize() {
-    local filename=${1%\.*}
-    local extension="${1##*.}"
-    local separator="_"
-    local suffix="optimized"
-    local finalName="$filename$separator$suffix.$extension"
-    convert $1 -strip -interlace Plane -quality 85% $finalName
-    echo "$finalName created"
-}
-
-Imgoptimize() {
-    local filename=${1%\.*}
-    local extension="${1##*.}"
-    local separator="_"
-    local suffix="optimized"
-    local convert $1 -strip -interlace Plane -quality 85% $1
-    echo "$1 created"
-}
-
-imgoptimizeall() {
-    for f in *.${1}; do
-        imgoptimize "$f"
-    done
-}
-
-Imgoptimizeall() {
-    for f in *.${1}; do
-        Imgoptimize "$f"
-    done
-}
-
-imgtojpg() {
-    for file in "$@"
-    do
-        local filename=${file%\.*}
-        convert -quality 100 $file "${filename}.jpg"
-    done
-}
-
-imgtopng() {
-    for file in "$@"
-    do
-        local filename=${file%\.*}
-        convert -quality 100 $file "${filename}.png"
-    done
-}
-
-imgtowebp() {
-    for file in "$@"
-    do
-        local filename=${file%\.*}
-        cwebp -q 100 $file -o $(basename ${filename}).webp
-    done
-}
-
-gtrm() {
-    git tag -d $1
-
-    if [ ! -z "$2" ]; then
-        git push $2 :refs/tags/$1
-    else
-        git push origin :refs/tags/$1
-    fi
-}
-
 ssh-create() {
     if [ ! -z "$1" ]; then
-        ssh-keygen -f $HOME/.ssh/$1 -t rsa -N '' -C "$1"
-        chmod 700 $HOME/.ssh/$1*
+        ssh-keygen -f $HOME/.ssh/$1 -t ed25519 -N '' -C "$1"
+        chmod 600 $HOME/.ssh/$1
+        chmod 644 $HOME/.ssh/$1.pub
     fi
 }
 
-dback () {
-    if [ ! -z $1 ] && [ ! -z $2 ]; then
-        if [ ! -z $3 ]; then
-            BS=$3
-        else
-            BS="512k"
-        fi
-
-        dialog --defaultno --title "Are you sure?" --yesno "This will copy $1 to $2 (bitsize: $BS). Everything on $2 will be deleted.\n\n
-        Are you sure?"  15 60 || exit
-
-        (sudo pv -n $1 | sudo dd of=$2 bs=$BS conv=notrunc,noerror) 2>&1 | dialog --gauge "Backup from disk $1 to disk $2... please wait" 10 70 0
-    else
-        echo "You need to provide an input disk as first argument (i.e /dev/sda) and an output disk as second argument (i.e /dev/sdb)"
-    fi
-}
-
-blimg() {
-    if [ ! -z $1 ] && [ ! -z $2 ] && [ ! -z $3 ]; then
-        local CYEAR=$(date +'%Y')
-        local BASEDIR="${HOME}/workspace/webtechno/static"
-        #Basedir current year
-        local BASEDIRY="${HOME}/workspace/webtechno/static/${CYEAR}"
-
-        if [ ! -d $BASEDIRY ]; then
-            mkdir $BASEDIRY
-        fi
-
-        #basedir current article
-        local BASEDIRC="${BASEDIRY}/${2}"
-
-        if [ ! -d $BASEDIRP ]; then
-            mkdir $BASEDIRP
-        fi
-
-        local IMGRESIZED=imgresize "${1} 780"
-        echo "$IMGRESIZED"
-    fi
-}
-
-postgdump() {
-    local USER="postgres"
-    local HOST="localhost"
-    if [ ! -z $1 ]; then
-        if [ -f "${1}.sql" ]; then
-            rm -i "${1}.sql"
-        fi
-
-        if [ $# = 1 ]; then
-            pg_dump -c -U $USER -h $HOST $1 | pv --progress > "${1}.sql"
-            echo $1
-        fi
-
-        if [ $# = 2 ]; then
-            pg_dump -c -U $2 -h $HOST $1 | pv --progress > "${1}.sql"
-            echo $1
-        fi
-
-        if [ $# = 3 ]; then
-            pg_dump -c -U $2 -h $3 $1 | pv --progress > "${1}.sql"
-            echo $1
-        fi
-    fi
-
-    if [ $# = 0 ]; then
-        echo "You need at least to provide the database name"
-    fi
-}
-
-postgimport() {
-    local USER="postgres"
-    local HOST="localhost"
-    if [ ! -z $1 ]; then
-        DB=${1%\.*}
-        # sed -i "1s/^/CREATE DATABASE $DB;\n/" $1
-        if [ $# = 1 ];
-        then
-            pv --progress ${1} | psql -U $USER -h $HOST $1 -d $DB
-            echo $1
-        fi
-
-        if [ $# = 2 ]; then
-            pv --progress ${1} | psql -U $1 -h $HOST $1 -d $DB
-            echo $1
-        fi
-
-        if [ $# = 3 ]; then
-            pv --progress ${1} | psql -U $1 -h $2 $1 -d $DB
-            echo $1
-        fi
-    fi
-
-    if [ $# = 0 ]; then
-        echo "You need at least to provide the database name"
-    fi
-}
 
 matrix () {
     local lines=$(tput lines)
@@ -368,10 +94,6 @@ while :; do
     echo $lines $cols $(( $RANDOM % $cols)) $(( $RANDOM % 72 ))
     sleep 0.05
 done | awk "$awkscript"
-}
-
-pgdump() {
-    pg_dump -U postgres -h localhost x_loc_0bdf08de > pulsecheck_service_test.sql 
 }
 
 githeat() {
@@ -433,62 +155,6 @@ ports() {
     sudo netstat -tulpn | grep LISTEN | fzf;
 }
 
-mnt() {
-    local FILE="/mnt/external"
-    if [ ! -z $2 ]; then
-        FILE=$2
-    fi
-
-    if [ ! -z $1 ]; then
-        sudo mount "$1" "$FILE" -o rw
-        echo "Device in read/write mounted in $FILE"
-    fi
-
-    if [ $# = 0 ]; then
-        echo "You need to provide the device (/dev/sd*) - use lsblk"
-    fi
-}
-
-umnt() {
-    local DIRECTORY="/mnt"
-    if [ ! -z $1 ]; then
-        DIRECTORY=$1
-    fi
-    MOUNTED=$(grep $DIRECTORY /proc/mounts | cut -f2 -d" " | sort -r)
-    cd "/mnt"
-    sudo umount $MOUNTED
-    echo "$MOUNTED unmounted"
-}
-
-mntmtp() {
-    local DIRECTORY="$HOME/mnt"
-    if [ ! -z $2 ]; then
-        local DIRECTORY=$2
-    fi
-    if [ ! -d $DIRECTORY ]; then
-        mkdir $DIRECTORY
-    fi
-
-    if [ ! -z $1 ]; then
-        simple-mtpfs --device "$1" "$DIRECTORY"
-        echo "MTPFS device in read/write mounted in $DIRECTORY"
-    fi
-
-    if [ $# = 0 ]; then
-        echo "You need to provide the device number - use simple-mtpfs -l"
-    fi
-}
-
-umntmtp() {
-    local DIRECTORY="$HOME/mnt"
-    if ; then
-        DIRECTORY=$1
-    fi
-    cd $HOME
-    umount $DIRECTORY
-    echo "$DIRECTORY with mtp filesystem unmounted"
-}
-
 # Silly little script to understand zstyle
 names() {
     local user_name user_surname user_nickname computer_name
@@ -499,28 +165,6 @@ names() {
     zstyle -s ':name:' set_computer_name computer_name || computer_name="BENDER"
 
     echo "You're $user_name $user_surname $user_nickname and you're computer is called $computer_name"
-}
-
-# --restrict-filenames replace special characters like spaces in filenames.
-ydlp() {
-    if ; then
-        youtube-dl --restrict-filenames -f 22 -o "%(autonumber)s-%(title)s.%(ext)s" "$1"
-    else
-        echo "You need to specify a playlist url as argument"
-    fi
-}
-
-ydl() {
-    if [ ! -z $1 ]; then
-        youtube-dl --restrict-filenames -f 22 -o "%(title)s.%(ext)s" "$1"
-    else
-        echo "You need to specify a video url as argument"
-    fi
-}
-
-initKondo() {
-    mkdir .clj-kondo
-    clj-kondo --lint "$(boot with-cp -w -f -)"
 }
 
 vinfo() {
@@ -534,65 +178,16 @@ zshcomp() {
     done | sort
 }
 
-wav2flac() {
-    for file in "$@"; do
-        local filename=${file%\.*}
-        local extension="${file##*.}"
-        ffmpeg -i "$filename.wav" -af aformat=s32:176000 "$filename.flac"
-    done
-}
+# duckduckgo() {
+#     lynx -vikeys -accept_all_cookies "https://lite.duckduckgo.com/lite/?q=$@"
+# }
 
-rmwav2flac() {
-    for file in "$@"; do
-        local filename=${file%\.*}
-        local extension="${file##*.}"
-        ffmpeg -i "$filename.wav" -af aformat=s32:176000 "$filename.flac"
-        rm -f $file
-    done
-}
-
-freetouch() {
-    touch $1.mm
-    cat <<EOF > $1.mm
-<map version="1.0.1">
-<!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
-<node TEXT="Title"/>
-</map>
-EOF
-}
-
-duckduckgo() {
-    lynx -vikeys -accept_all_cookies "https://lite.duckduckgo.com/lite/?q=$@"
-}
-
-wikipedia() {
-    lynx -vikeys -accept_all_cookies "https://en.wikipedia.org/wiki?search=$@"
-}
-
-
-
-# Count number of words in my blog for a given year
-blogwc() {
-    DATE=$(date +"%Y")
-    if [ ! -z $1 ]; then
-        DATE=$1
-    fi
-    cd ~/workspace/webtechno/content/post && grep -l "date = \"$DATE" *.md | xargs wc && cd -
-}
+# wikipedia() {
+#     lynx -vikeys -accept_all_cookies "https://en.wikipedia.org/wiki?search=$@"
+# }
 
 cheat() {
     curl cheat.sh/$1
-}
-
-touchproject(){
-    if [ -z $1 ];then
-        echo "You need to pass a project name"
-    else
-        local project=$1
-        cd "$CLOUD/project_management/"
-        taskell $project
-        cd -
-    fi
 }
 
 vimgolf() {
@@ -604,23 +199,10 @@ vimgolf() {
     docker run --rm  --net=host -it -e "key=[$VIM_GOLF_KEY]" kramos/vimgolf "$ID"
 }
 
-fm() {
-    local -r file=$1
-    freemind $file &> /dev/null &
-}
-
 back() {
     for file in "$@"; do
         cp "$file" "$file".bak
     done
-}
-
-calcul() {
-    bc -l <<< "$@"
-}
-
-jrnl() {
-    cd "$JRNL" && vim +Jrnl
 }
 
 tiny() {
@@ -628,29 +210,8 @@ tiny() {
     curl -s "http://tinyurl.com/api-create.php?url=$1"
 }
 
-serve() {
-    local -r PORT=${1:-8888}
-    python2 -m SimpleHTTPServer "$PORT"
-}
-
-kubecfg() {
-    . "$DOTFILES_CLOUD/kubecfg.sh"
-}
-
-scratchpad() {
-    "$DOTFILES/bash/scripts/scratchpad.sh" "$@"
-}
-
 git-jump() {
     "$DOTFILES/bash/scripts/git-jump.sh" "$@"
-}
-
-# Rename music files automatically depending of their tags (mp3/ogg/flac)
-mvtag() {
-    local option=$1
-    shift
-
-    lltag --yes "$option" -R --rename-regexp "s/[\'?,\[\]\.\(\):]//" --rename-regexp "s/_-_/-/" --rename-min --rename-sep '_' --rename "%P%n-%t" "$@"
 }
 
 reposize() {
@@ -664,79 +225,10 @@ reposize() {
   | numfmt --to=iec --from-unit=1024
 }
 
-# Connect my NAS to $HOME/Network
-nas() {
-    sshfs -o idmap=user,default_permissions nas:/share ~/Network
-}
-
-# Disable the native keyboard for my TUXEDO laptop
--keyb() {
-    xinput disable $(xinput list | grep -i "at translated set" | awk '{print $7}' | sed 's/id=//')
-}
-
-# Enable the native keyboard for my TUXEDO laptop
-keyb() {
-    xinput enable $(xinput list | grep -i "at translated set" | awk '{print $7}' | sed 's/id=//')
-}
-
-# Enable native pad for my Tuxedo laptop
-pad() {
-    xinput enable $(xinput list | grep -i "touchpad" | awk '{print $6}' | sed 's/id=//')
-}
-
-# Disable native pad for my Tuxedo laptop
--pad() {
-    xinput disable $(xinput list | grep -i "touchpad" | awk '{print $6}' | sed 's/id=//')
-}
 
 # Launch a program in a terminal without getting any output,
 # and detache the process from terminal
 # (can then close the terminal without terminating process)
 -echo() {
     "$@" &> /dev/null & disown
-}
-
-# Generate a password - default 20 characters
-pass() {
-    local size=${1:-20}
-    cat /dev/random | tr -dc '[:graph:]' | head -c$size
-}
-
-# Generate a m3u files with same filename as directories passed as arguments.
-# The file is written with all files in each arg.
-# Example: cm3u Xenogears
-# Create a file 'Xenogears.m3u' and inside for example 'Xenogears/Xenogears The Game.bin'
-cm3u() {
-    for file in "$@"
-    do
-        if [ -d $file ]; then
-            m3u="$file.m3u"
-            find "$file" -type f > "$m3u"
-        else
-            echo "'$file' should be the directory where all your files are"
-        fi
-    done
-}
-
-backup() {
-    "$DOTFILES/bash/scripts/backup/backup.sh" "-x" "$@" "$DOTFILES_CLOUD/backup/dir.csv"
-}
-
-# Transfer all ROMS to my rg35xx handheld console
-roms2gb() {
-    "$DOTFILES/bash/scripts/backup/backup.sh" "$@" "$DOTFILES_CLOUD/backup/roms.csv"
-    cp /home/hypnos/Games/emulators/console/nes/roms/hacks/* /run/media/hypnos/ROMS/FC
-    cp /home/hypnos/Games/emulators/console/snes/roms/hacks/* /run/media/hypnos/ROMS/SFC
-    cp /home/hypnos/Games/emulators/console/megadrive/roms/hacks/* /run/media/hypnos/ROMS/MD
-    cp /home/hypnos/Games/emulators/console/gba/roms/hacks/* /run/media/hypnos/ROMS/GBA
-    cp /home/hypnos/Games/emulators/console/gb/roms/hacks/* /run/media/hypnos/ROMS/GB
-}
-
-
-pom() {
-    local -r HOURS=${1:?}
-    local -r MINUTES=${2:-0}
-    local -r POMODORO_DURATION=${3:-25}
-
-    bc <<< "(($HOURS * 60) + $MINUTES) / $POMODORO_DURATION"
 }

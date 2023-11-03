@@ -6,15 +6,6 @@
 
 alias shutdown='sudo shutdown now'
 alias restart='sudo reboot'
-alias suspend='sudo pm-suspend'
-
-alias bigf= 'find / -xdev -type f -size +500M'  # display "big" files > 500M
-
-# +-----+
-# | X11 |
-# +-----+
-
-alias xpropc='xprop | grep WM_CLASS' # display xprop class
 
 # +-----+
 # | Zsh |
@@ -23,14 +14,12 @@ alias xpropc='xprop | grep WM_CLASS' # display xprop class
 alias d='dirs -v'
 for index ({1..9}) alias "$index"="cd +${index} > /dev/null"; unset index # directory stack
 
-alias kitty='kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty'
-
 # +----+
 # | ls |
 # +----+
 
 alias ls='ls --color=auto'
-alias l='ls -l'
+alias l='ls -lh'
 alias ll='ls -lahF'
 alias lls='ls -lahFtr'
 alias la='ls -A'
@@ -47,8 +36,7 @@ alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 
 alias cp='cp -iv'
 alias mv='mv -iv'
-alias rm='rm -iv'
-alias la='ls -alh'
+alias rm='rm -Iv'
 
 # +------+
 # | grep |
@@ -57,40 +45,10 @@ alias la='ls -alh'
 alias grep="grep -P -i --color=auto"
 
 # +------+
-# | xlip |
-# +------+
-
-alias cb='xclip -sel clip'
-
-# +------+
 # | dust |
 # +------+
 
 alias dust='du -sh * | sort -hr'
-
-# +------+
-# | ping |
-# +------+
-
-alias pg='ping 8.8.8.8'
-
-# +------+
-# | time |
-# +------+
-
-alias time='/usr/bin/time'
-
-# +----+
-# | bc |
-# +----+
-
-alias calc="noglob calcul"
-
-# +-----+
-# | bat |
-# +-----+
-
-alias batl='bat --paging=never -l log'
 
 # +--------+
 # | pacman |
@@ -128,34 +86,6 @@ alias yayrr='yay -Rs'   # remove package with unused dependencies by other softw
 alias yayrc='yay -Sc'   # remove yay's cache
 alias yayls="yay -Qe"
 
-# +--------+
-# | netctl |
-# +--------+
-
-alias wifi='sudo wifi-menu -o'
-
-# +--------+
-# | Golang |
-# +--------+
-
-alias gob="go build"
-alias gor="go run" 
-alias goc="go clean -i"
-alias gta="go test ./..."       # go test all
-alias gia="go install ./..."    # go install all
-
-# +------+
-# | Hugo |
-# +------+
-
-alias hugostart="hugo server -DEF --ignoreCache"
-
-# +--------+
-# | muffet |
-# +--------+
-
-alias deadlink="muffet -t 20"
-
 # +---------+
 # | netstat |
 # +---------+
@@ -168,8 +98,9 @@ alias port="netstat -tulpn | grep"
 
 alias vim='nvim'
 alias vi='nvim'
+alias vimdiff='nvim -d'
+
 alias svim='sudoedit'
-alias dvim="vim -u /usr/share/nvim/archlinux.vim" # nvim with default config
 alias nvimc='rm -I $VIMCONFIG/swap/*'             # clean nvim swap file
 alias nvimcu='rm -I $VIMCONFIG/undo/*'            # clean the vim undo
 alias nviml='nvim -w $VIMCONFIG/vimlog "$@"'      # log the keystrokes 
@@ -223,20 +154,6 @@ alias tmuxl='tmux list-sessions'
 
 alias mux='tmuxp load'
 
-
-# +------+
-# | lynx |
-# +------+
-
-alias lynx='lynx -vikeys -accept_all_cookies'
-
-# +----------------+
-# | udiskie-umount |
-# +----------------+
-
-alias ubackup='udiskie-umount $MEDIA/BACKUP'
-alias umedia='udiskie-umount $MEDIA/*'
-
 # +--------+
 # | docker |
 # +--------+
@@ -249,54 +166,16 @@ alias dockprune='docker system prune -a'                                        
 alias dockceu='docker-compose run --rm -u $(id -u):$(id -g)'                    # run as the host user
 alias dockce='docker-compose run --rm'
 
-# +----------------+
-# | docker-compose |
-# +----------------+
+# +----------+
+# | crowdsec |
+# +----------+
+alias cscli="docker exec -t crowdsec cscli"
 
-alias docker-compose-dev='docker-compose -f docker-compose-dev.yml' # run a different config file than the default one
 
 # +----------+
 # | Personal |
 # +----------+
 
-alias nvidia-settings='nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settings'
-
 # Folders
-alias work="$HOME/workspace"
-alias doc="$HOME/Documents"
 alias dow="$HOME/Downloads"
 alias dot="$HOME/.dotfiles"
-
-# Mindmaps
-alias freebrain="freemind $CLOUD/knowledge_base/_BRAINSTORMING/*.mm &> /dev/null &"
-alias freelists="freemind $CLOUD/knowledge_base/_LISTS/*.mm &> /dev/null &"
-alias freepain="freemind $CLOUD/knowledge_base/_PROBLEMS/*.mm &> /dev/null &"
-alias freeproj="freemind $CLOUD/knowledge_base/_PROJECTS/*.mm &> /dev/null &"
- 
-# Golang
-alias gosrc="$GOPATH/src/" # golang src
-alias gobin="$GOPATH/bin/" # golang bin
-
-# Clojure
-alias cljrepl='clojure -Sdeps "{:deps {com.bhauman/rebel-readline {:mvn/version \"0.1.4\"}}}" -m rebel-readline.main'
-
-# AWS
-alias awsa='aws --profile amboss-profile'
-
-# OBS
-
-alias obsn='prime-run obs&'
-
-# +--------+
-# | Custom |
-# +--------+
-
-alias mke='mkextract'
-alias ex='extract'
-
-# +---------+
-# | scripts |
-# +---------+
-
-alias ddg="duckduckgo"
-alias wiki="wikipedia"

@@ -4,7 +4,7 @@
 # rm $VIMCONFIG/ftplugin &>/dev/null
 
 
-# Create all necessary folder for neovim
+# Create all necessary folders for neovim
 if [ ! -d "$VIMCONFIG" ]
   then
     mkdir "$VIMCONFIG"
@@ -17,7 +17,7 @@ fi
 # From Cloud
 ln -sf "$DOTFILES_CLOUD/projects.nvimrc" "$VIMCONFIG"
 
-# crreate vim sessions and macros folder
+# create vim sessions and macros folder
 mkdir -p "$VIMCONFIG/sessions"
 
 # install nvim config

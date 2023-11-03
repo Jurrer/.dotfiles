@@ -6,6 +6,9 @@ augroup vimrc
     autocmd!
 augroup END
 
+" disable mouse
+set mouse=
+
 " +------------+
 " | leader key |
 " +------------+

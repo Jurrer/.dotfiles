@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [[ -f "/tmp/CURRENT_WALLPAPER" ]]; then
-    wall=$(cat /tmp/CURRENT_WALLPAPER)
-    feh --no-fehbg --bg-fill "$wall"
-else
-    source "$DOTFILES/feh/fehrnwall"
-fi
