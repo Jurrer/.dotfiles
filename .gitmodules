@@ -15,3 +15,6 @@
 [submodule "zsh/plugins/zsh-autosuggestions"]
 	path = zsh/plugins/zsh-autosuggestions
 	url = git@github.com:zsh-users/zsh-autosuggestions.git
+[submodule "nvim/pack/external/start/neomake"]
+	path = nvim/pack/external/start/neomake
+	url = git@github.com:neomake/neomake.git
