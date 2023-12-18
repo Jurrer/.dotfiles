@@ -17,6 +17,3 @@
 [submodule "zsh/prompts/powerlevel10k"]
 	path = zsh/prompts/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
-[submodule "zsh/plugins/powerlevel10k"]
-	path = zsh/plugins/powerlevel10k
-	url = https://github.com/romkatv/powerlevel10k.git
