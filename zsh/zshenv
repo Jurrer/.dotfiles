@@ -16,7 +16,7 @@ export XDG_CACHE_HOME="$XDG_CONFIG_HOME/cache"
 
 # editor
 export EDITOR="nvim"
-export VISUAL="gedit"
+export VISUAL="nvim"
 
 # zsh
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"

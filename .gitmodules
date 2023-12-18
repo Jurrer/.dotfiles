@@ -5,10 +5,6 @@
 	path = zsh/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting
     branch = master
-[submodule "zsh/prompt"]
-	path = zsh/prompt
-	url = https://github.com/Phantas0s/purification
-    branch = master
 [submodule "zsh/prompts/pure"]
 	path = zsh/prompts/pure
 	url = git@github.com:sindresorhus/pure.git
@@ -18,3 +14,9 @@
 [submodule "nvim/pack/external/start/neomake"]
 	path = nvim/pack/external/start/neomake
 	url = git@github.com:neomake/neomake.git
+[submodule "zsh/prompts/powerlevel10k"]
+	path = zsh/prompts/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
+[submodule "zsh/plugins/powerlevel10k"]
+	path = zsh/plugins/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
