@@ -30,6 +30,9 @@ export VIMCONFIG="$XDG_CONFIG_HOME/nvim"
 # Man pages
 export MANPAGER='nvim +Man!'
 
+# anaconda
+# https://aur.archlinux.org/packages/anaconda#comment-985741
+export CRYPTOGRAPHY_OPENSSL_NO_LEGACY=true
 
 # git
 export GIT_REVIEW_BASE=master # See gitconfig

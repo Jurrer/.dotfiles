@@ -138,6 +138,14 @@ autoload -U compinit; compinit
 # # Override colors
 # eval "$(dircolors -b $ZDOTDIR/dircolors)"
 
+# # +----------+
+# # | ANACONDA |
+# # +----------+
+# https://aur.archlinux.org/packages/anaconda#comment-880231
+
+[ -f /opt/anaconda/etc/profile.d/conda.sh ] && source /opt/anaconda/etc/profile.d/conda.sh
+
+
 # +---------+
 # | ALIASES |
 # +---------+
