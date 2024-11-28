@@ -50,7 +50,7 @@ fi
 . "$DOTFILES/install/install-zsh.sh"
 # . "$DOTFILES/install/install-from-cloud.sh"
 # . "$DOTFILES/install/install-fonts.sh"
-. "$DOTFILES/install/install-X11.sh"
+# . "$DOTFILES/install/install-X11.sh"
 
 dot_is_installed git && dot_install git
 dot_is_installed nvim && dot_install nvim
