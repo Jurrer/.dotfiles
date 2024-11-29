@@ -11,15 +11,17 @@ set mouse=
 
 " +------------+
 " | leader key |
-" +------------+
+" +------------+ {{{
 
 " Configure leader key
 let mapleader = "\<space>"
 let maplocalleader = "\<space>"
 
+" }}}
+
 " +----------------+
 " | install plugin |
-" +----------------+
+" +----------------+ {{{
 
 " Source plugin definition file
 source $VIMCONFIG/init_plugins.vim
@@ -32,15 +34,18 @@ lua require('hypnos/status_line')
 lua require('hypnos/tab_line')
 lua require('hypnos/text_objects').basic_text_objects()
 lua require('hypnos/text_objects').indent_text_objects()
+lua require('hypnos/project').read_project_config()
 
 " source every plugin configs
 for file in split(glob('$VIMCONFIG/pluggedconf/*.nvimrc'), '\n')
     execute 'source' file
 endfor
 
+" }}}
+
 " +------------------+
 " | global variables |
-" +------------------+
+" +------------------+ {{{
 
 " Disable fold in markdown
 let g:vim_markdown_folding_disabled = 1
@@ -52,14 +57,14 @@ let g:did_load_filetypes = 0
 " Lua syntax highlighting in Vimscript (*.vim) files
 let g:vimsyn_embed = 'l'
 
+" Add highlighting for the following languages in markdown
 let g:markdown_fenced_languages = ['html', 'python', 'lua', 'vim', 'typescript', 'javascript', 'go']
 
-" Plugin ai.vim
-let g:ai_no_mappings = 1
+" }}}
 
 " +-----------------+
 " | general mapping |
-" +-----------------+
+" +-----------------+ {{{
 
 " Create box and figlet - ESSENTIAL :D
 vmap <F2> !boxes -d stone<cr>
@@ -70,40 +75,39 @@ nnoremap <silent> <leader><space> <Cmd>nohlsearch<cr>
 inoremap <c-d> <del>
 
 " location & quickfix
-nnoremap <silent> <leader>l :call general#ToggleList("Location List", 'l')<CR>
-nnoremap <silent> <leader>q :call general#ToggleList("Quickfix List", 'c')<CR>
-nnoremap <leader>j :cnext<CR>
-nnoremap <leader>k :cprevious<CR>
-nnoremap <leader>lj :lnext<CR>
-nnoremap <leader>lk :lprevious<CR>
+nnoremap <leader>j :cnext<cr>
+nnoremap <leader>k :cprevious<cr>
+nnoremap <leader>lj :lnext<cr>
+nnoremap <leader>lk :lprevious<cr>
 
 " close the current buffer and switch to alternate buffer
-nnoremap <silent> <leader>dd <cmd>bp <bar>bd! #<cr>
+nnoremap <silent> <leader>dd <cmd>bp <bar> bd! #<cr>
 
 " open relative paths under cursor with xdg-open (example: './my/relative/file.pdf')
 nnoremap <silent> gX :silent :execute "!xdg-open" expand('%:p:h') . "/" . expand("<cfile>") " &"<cr>
 
 " open current file using xdg-open
-nnoremap <leader>x :silent :execute "!xdg-open %"<CR>
+nnoremap <leader>x :silent :execute "!xdg-open %"<cr>
 
 " Go to file even if doesn't exist
-nnoremap gF :e <cfile><CR>
+nnoremap gF :e <cfile><cr>
 
 "toggle between absolute -> relative line number
-" nnoremap <C-n> :let [&number, &relativenumber] = [&number, &number+&relativenumber==1]<CR>
-nnoremap <C-n> :set relativenumber! <CR>
+" nnoremap <C-n> :let [&number, &relativenumber] = [&number, &number+&relativenumber==1]<cr>
+nnoremap <c-n> <cmd>set relativenumber!<cr>
+inoremap <c-n> <cmd>set relativenumber!<cr>
 
 " tabs
-nnoremap th :tabfirst<CR>
-nnoremap tk :tabnext<CR>
-nnoremap tj :tabprev<CR>
-nnoremap tl :tablast<CR>
-nnoremap tn :tabnew<CR>
-nnoremap tc :tabclose<CR>
+nnoremap th :tabfirst<cr>
+nnoremap tk :tabnext<cr>
+nnoremap tj :tabprev<cr>
+nnoremap tl :tablast<cr>
+nnoremap tn :tabnew<cr>
+nnoremap tc :tabclose<cr>
 
 " move tab to first position
-nnoremap tH :tabm 0<CR>
-nnoremap tL :tabm<CR>
+nnoremap tH :tabm 0<cr>
+nnoremap tL :tabm<cr>
 
 " create horizontal window
 nnoremap <c-w>h <c-w>s
@@ -121,17 +125,19 @@ nnoremap J mzJ`z
 tnoremap <C-q> <C-\><C-n>
 
 " edit vimrc with f5 and source it with f6
-nnoremap <silent> <leader><f5> :vsplit $MYVIMRC<CR>
-nnoremap <silent> <leader><f6> :source $MYVIMRC<CR>
+nnoremap <silent> <leader><f5> :vsplit $MYVIMRC<cr>
+nnoremap <silent> <leader><f6> :source $MYVIMRC<cr>
 
 " Execute a macro for the all selection
-xnoremap @ :<C-u>call general#ExecuteMacroOverVisualRange()<CR>
+xnoremap @ <cmd>call general#ExecuteMacroOverVisualRange()<cr>
+
+xnoremap s :s/\%V//g<left><left><left>
 
 " Paste from the yank buffer
 " nnoremap <leader>p "0p
 " nnoremap <leader>P "0P
 
-" Surround with s (I never use the NORMAL substitute command)
+" Surround with s (I never use the substitute command in normal mode)
 nmap s ys
 
 " Save session
@@ -144,8 +150,6 @@ nnoremap <leader>ml :source $VIMCONFIG/macros/
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 
-nnoremap <leader>g :file<cr>
-
 nnoremap <silent> <leader>p :let &path=join(split(system("find $(pwd) -type d -not -path '*git*'"), '\n'), ',')<cr>
 
 " Automatically fix the spelling
@@ -153,11 +157,28 @@ imap <c-z> <c-g>u<Esc>[s1z=`]a<c-g>u
 nnoremap <silent> <leader>Z 1z=
 
 " Simple Zoom / Restore window (like Tmux)
-nnoremap <silent> <leader>z :call general#ZoomToggle()<CR>
+nnoremap <silent> <leader>z :call general#ZoomToggle()<cr>
+
+" Scroll more
+nnoremap <c-e> 10<c-e>
+nnoremap <c-y> 10<c-y>
+
+" Jumping from branch to branch in the undo tree
+nnoremap <leader>u g-
+nnoremap <leader>r g+
+
+" Open all folds more easily
+nnoremap zz zR
+
+" Define a text-object for square brackets
+onoremap ir i[
+onoremap ar a[
+
+" }}}
 
 " +---------------+
 " | User Commands |
-" +---------------+
+" +---------------+ {{{
 
 " buffer cleanup - delete every buffer except the one open
 command! Ball :silent call general#Bdeleteonly()
@@ -173,33 +194,21 @@ command! -nargs=1 -complete=command LimitChar silent call matchadd('MaxLineChar'
 " Change the directory to the current file
 command! CDC cd %:p:h
 
+" Try to use popup in Neovim
 command! Gpopupblame call general#GitBlame()
 command! CloseFloat call general#CloseFloat()
 
-command! WM :w | Make book.pdf
+" }}}
 
 " +---------+
 " | autocmd |
-" +---------+
+" +---------+ {{{
+
+autocmd vimrc CmdlineEnter \?,/ set hlsearch
+autocmd vimrc InsertEnter * set nohlsearch
 
 " restore the position of the last cursor when you open a file
 autocmd vimrc BufReadPost * call general#RestorePosition()
-
-" augroup ToggleSearchHighlighting
-" au!
-" autocmd CmdlineEnter \?,/ set hlsearch
-" autocmd CmdlineLeave \?,/ set nohlsearch
-" augroup END
-
-" nnoremap <leader>h <cmd>set hlsearch!<cr>
-
-" augroup ToggleSearchHighlighting
-" au!
-" autocmd CmdlineEnter \?,/ set hlsearch
-" autocmd InsertEnter * set nohlsearch
-" augroup END
-
-" nnoremap <leader>h <cmd>set hlsearch!<cr>
 
 " delete trailing space when saving files
 autocmd vimrc BufWrite *.php,*.js,*.jsx,*.vue,*.twig,*.html,*.sh,*.yaml,*.yml,*.clj,*.cljs,*.cljc,*.vim,*.lua,*.md call general#DeleteTrailingWS()
@@ -216,33 +225,38 @@ autocmd vimrc BufEnter *.pdf silent! execute "!zathura ".expand("%") "&" | bwipe
 " augroup END
 
 " Formatting options (:help fo-table)
-autocmd vimrc FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+autocmd vimrc FileType vim,lua setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " Multi OS version (open for macOS)
 " command -nargs=? DevDocs call system('type -p open >/dev/null 2>&1 && open https://devdocs.io/#q=<args> || xdg-open https://devdocs.io/#q=<args>')
 " Only Linux
 command! -nargs=? DevDocs call system('xdg-open https://devdocs.io/#q=<args>')
-autocmd vimrc FileType python,ruby,rspec,javascript,go,html,php nnoremap <buffer><leader>D :execute "DevDocs " . expand('<cword>')<CR>
+autocmd vimrc FileType python,ruby,rspec,javascript,go,html,php nnoremap <buffer><leader>D :execute "DevDocs " . expand('<cword>')<cr>
 
 " Automatically source vimrc after saving
 autocmd vimrc BufWritePost init.vim source $MYVIMRC
 
+" }}}
+
 " +--------------+
 " | Highlighting |
-" +--------------+
+" +--------------+ {{{
 
 " highlight the line which is longer than the defined margin (80 character)
 autocmd vimrc FileType php,js,vue,go,sh,md call matchadd('MaxLineChar', '\%80v', 10)
 autocmd vimrc FileType vim call matchadd('MaxLineChar', '\%120v', 100)
+autocmd vimrc FileType gitcommit call matchadd('MaxLineChar', '\%72v', 100)
 
 " Highlight briefly yanked text
-autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=300}
+autocmd vimrc TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=300}
+
+" }}}
 
 " +---------------+
 " | Abbreviations |
-" +---------------+
+" +---------------+ {{{
 
-" from `:help abbreviations` (see `:helpgrep Eatchar`
+" from `:help abbreviations` (see `:helpgrep Eatchar`)
 func! Delchar(pat)
     let c = nr2char(getchar(0))
     return (c =~ a:pat) ? '' : c
@@ -294,30 +308,17 @@ iabbrev sovling solving
 iabbrev fisrt first
 iabbrev benefitial beneficial
 iabbrev comamnd command
+iabbrev thsi this
+iabbrev occurence occurrence
 
 " Date
 iabbrev <expr> date_ strftime('%Y-%m-%d')
 
-" Some abbreviations finish with _ because it's not often that an underscore is followed by a space - useful for snippets
-
-" Useful for writing the book Learning to Play Vim
-
-" Create a cursor
-iabbrev cur_ ж\cur{}ж<left><left><c-r>=Delchar('\s')<cr>
-" Create a mnemonic
-iabbrev mne_ []{.mne}<esc>F[a<c-r>=Delchar('\s')<cr>
-" Create smallcaps
-iabbrev sc_ []{.smallcaps}<esc>F[a<c-r>=Delchar('\s')<cr>
-iabbrev ind_ []{.index}<esc>F[a<c-r>=Delchar('\s')<cr>
-
-" Useful for markdown for The Valuable Dev
-
-iabbrev mne~ {{< mne >}}<esc>F>i<c-r>=Delchar('\s')<cr>
-" iabbrev mne~ <esc>F[a<c-r>=Delchar('\s')<cr>
+" }}}
 
 " +-------+
 " | netrw |
-" +-------+
+" +-------+ {{{
 
 command! Oexplore exe 'Explore' getcwd()
 
@@ -325,9 +326,11 @@ command! Oexplore exe 'Explore' getcwd()
 nnoremap <leader>v :Explore<cr>
 nnoremap <leader>V :Oexplore<cr>
 
+" }}}
+
 " +--------------+
 " | Set  options |
-" +--------------+
+" +--------------+ {{{
 
 " colorscheme
 colorscheme hypnos
@@ -344,10 +347,6 @@ set undodir=$VIMCONFIG/undo
 
 " number of undo saved
 set undolevels=10000 " How many undos
-set undoreload=10000 " number of lines to save for undo
-
-" set line number
-" set number
 
 " the copy goes to the clipboard
 set clipboard+=unnamedplus
@@ -404,19 +403,21 @@ set number relativenumber
 set diffopt+=vertical
 
 " to be able to use find in any projects
-set path=.,**,,
-" let &path=join(split(system('fd . --type d'), '\n'), ',')
+" set path=.,**,,
+let &path=join(split(system('fd . --type d'), '\n'), ',')
 
 " Don't display preview window for omni-completion
 set completeopt-=preview
 
 " Mapping to trigger completion in macro and mappings
-set wildcharm=<C-Z>
+set wildcharm=<c-z>
 
 " Split window when jump to a position from quickfix list
 " set switchbuf=vsplit
 
 " Set ripgrep for grep program
 if executable('rg')
-    set grepprg=rg\ --vimgrep\ --smart-case
+    let &grepprg='rg --vimgrep --smart-case $*'
 endif
+
+" }}}

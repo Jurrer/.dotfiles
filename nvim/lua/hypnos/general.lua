@@ -48,12 +48,6 @@ local function close_floating_windows()
     end
 end
 
-local function close_floating_window(id)
-    -- the argument 0 only close the popups in current tabpage
-    if vim.api.nvim_win_get_config(id).relative ~= '' then
-    end
-end
-
 -- From the help itself
 local function setTimeout(timeout, callback)
     local timer = vim.loop.new_timer()
@@ -78,5 +72,5 @@ return {
     del_trailing_ws = del_trailing_ws,
     zoom_toggle = zoom_toggle,
     git_blame = git_blame,
-    close_floating_windows = close_floating_windows
+    close_floating_windows = close_floating_windows,
 }

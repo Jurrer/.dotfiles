@@ -2,6 +2,8 @@
 " | install plugin |
 " +----------------+
 
+packadd cfilter
+
 call plug#begin("$VIMCONFIG/plugged")
 
 " +---------+
@@ -15,8 +17,10 @@ Plug 'tpope/vim-commentary' " keystroke to comment automatically
 Plug 'tpope/vim-dispatch' " Asynchronous make
 
 Plug 'AndrewRadev/splitjoin.vim' " Split or join arrays in PHP / struct in Go / other things
-Plug 'andymass/vim-matchup' " Match more stuff with % (html tag, LaTeX...)
+" Plug 'andymass/vim-matchup' " Match more stuff with % (html tag, LaTeX...)
 Plug 'editorconfig/editorconfig-vim'
+" Use gz to format title case
+Plug 'christoomey/vim-titlecase'
 
 " +----------+
 " | Snippets |
@@ -35,7 +39,8 @@ Plug 'alx741/vinfo' " Open info documentation files
 " | Undo tree |
 " +-----------+
 
-Plug 'simnalamburt/vim-mundo' " Undo tree display
+Plug 'mbbill/undotree'
+" Plug 'simnalamburt/vim-mundo' " Undo tree display
 
 " +-----------+
 " | Outliners |
@@ -100,7 +105,6 @@ Plug 'junegunn/fzf.vim'
 Plug 'godlygeek/tabular' " Align stuff (useful for markdown tables for example)
 Plug 'rhysd/vim-grammarous', { 'for': 'markdown' } " Show grammar mistakes
 Plug 'reedes/vim-wordy' " Verify quality of writting (see :Wordy)
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']} " Preview markdown file in browser
 
 " +-----+
 " | PHP |
@@ -142,17 +146,16 @@ Plug 'chrisbra/csv.vim'
 
 Plug 'tpope/vim-scriptease' " Debug vimscripts
 
-
 " +------------+
 " | Treesitter |
 " +------------+
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/playground'
+" Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Plug 'nvim-treesitter/playground'
 
-" +--------+
-" | OpenAI |
-" +--------+
+" +--------------+
+" | Intelligence |
+" +--------------+
 
-Plug 'aduros/ai.vim'
+" Plug 'zbirenbaum/copilot.lua'
 
 call plug#end()
