@@ -4,6 +4,9 @@
 # EXPORT ENVIRONMENT VARIABLES #
 ################################
 
+# SHELL
+[ -f "/usr/bin/zsh" ] && export SHELL="/usr/bin/zsh"
+
 export DOTFILES="$HOME/.dotfiles"
 export WORKSPACE="$HOME/workspace"
 
@@ -29,7 +32,6 @@ export VIMCONFIG="$XDG_CONFIG_HOME/nvim"
 
 # Man pages
 export MANPAGER='nvim +Man!'
-
 
 # git
 export GIT_REVIEW_BASE=master # See gitconfig
