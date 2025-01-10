@@ -179,3 +179,24 @@ alias cscli="docker exec -t crowdsec cscli"
 # Folders
 alias dow="$HOME/Downloads"
 alias dot="$HOME/.dotfiles"
+
+# wg
+# alias wu="sudo wg-quick up wg0"
+# alias wd="sudo wg-quick down wg0"
+
+wu() {
+    if [[ -n $1 ]]; then
+        sudo wg-quick up wg$1
+    else
+        echo "Usage: wu <X> (where X is the WireGuard interface number)"
+    fi
+}
+wd() {
+    if [[ -n $1 ]]; then
+        sudo wg-quick down wg$1
+    else
+        echo "Usage: wd <X> (where X is the WireGuard interface number)"
+    fi
+}
+
+
